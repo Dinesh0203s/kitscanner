@@ -50,8 +50,17 @@ export default function ScanPage() {
         scannerId,
         { 
           fps: 10, 
-          qrbox: { width: 250, height: 250 },
+          qrbox: function(viewfinderWidth, viewfinderHeight) {
+            // Make qrbox responsive to screen size
+            const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight)
+            const qrboxSize = Math.floor(minEdgeSize * 0.7)
+            return {
+              width: qrboxSize,
+              height: qrboxSize
+            }
+          },
           aspectRatio: 1.0,
+          showTorchButtonIfSupported: true,
         },
         false
       )
@@ -141,14 +150,14 @@ export default function ScanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3 sm:p-6">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Scan Laptop</h1>
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Scan Laptop</h1>
             <button
               onClick={() => router.push('/list')}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm sm:text-base"
             >
               View List
             </button>
@@ -168,16 +177,16 @@ export default function ScanPage() {
                   onChange={(e) => setSerialNumber(e.target.value)}
                   onKeyDown={handleSerialKeyDown}
                   placeholder="Scan or enter serial number"
-                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-lg"
+                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-base sm:text-lg"
                   disabled={isSubmitting || showSerialCamera}
                 />
                 <button
                   onClick={() => startCameraScanner('serial')}
                   disabled={isSubmitting || showSerialCamera || showElcotCamera}
-                  className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition flex items-center gap-2"
+                  className="px-3 sm:px-4 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition flex items-center justify-center gap-2 shrink-0"
                   title="Scan with camera"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
@@ -187,17 +196,17 @@ export default function ScanPage() {
 
             {/* Serial Camera Scanner */}
             {showSerialCamera && (
-              <div className="border-2 border-blue-500 rounded-lg p-4 bg-gray-50">
+              <div className="border-2 border-blue-500 rounded-lg p-3 sm:p-4 bg-white -mx-1 sm:mx-0">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-800">Scanning Serial Number</h3>
+                  <h3 className="font-semibold text-gray-800 text-sm sm:text-base">Scanning Serial Number</h3>
                   <button
                     onClick={stopCameraScanner}
-                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm"
+                    className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold shadow-md"
                   >
-                    Cancel
+                    Stop
                   </button>
                 </div>
-                <div id="serial-scanner"></div>
+                <div id="serial-scanner" className="overflow-hidden bg-gray-50 rounded-lg p-2"></div>
               </div>
             )}
 
@@ -214,16 +223,16 @@ export default function ScanPage() {
                   onChange={(e) => setElcotNumber(e.target.value)}
                   onKeyDown={handleElcotKeyDown}
                   placeholder="Scan or enter ELCOT number"
-                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-lg"
+                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-base sm:text-lg"
                   disabled={isSubmitting || showElcotCamera}
                 />
                 <button
                   onClick={() => startCameraScanner('elcot')}
                   disabled={isSubmitting || showSerialCamera || showElcotCamera}
-                  className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition flex items-center gap-2"
+                  className="px-3 sm:px-4 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition flex items-center justify-center gap-2 shrink-0"
                   title="Scan with camera"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
@@ -233,32 +242,32 @@ export default function ScanPage() {
 
             {/* ELCOT Camera Scanner */}
             {showElcotCamera && (
-              <div className="border-2 border-blue-500 rounded-lg p-4 bg-gray-50">
+              <div className="border-2 border-blue-500 rounded-lg p-3 sm:p-4 bg-white -mx-1 sm:mx-0">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-800">Scanning ELCOT Number</h3>
+                  <h3 className="font-semibold text-gray-800 text-sm sm:text-base">Scanning ELCOT Number</h3>
                   <button
                     onClick={stopCameraScanner}
-                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm"
+                    className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold shadow-md"
                   >
-                    Cancel
+                    Stop
                   </button>
                 </div>
-                <div id="elcot-scanner"></div>
+                <div id="elcot-scanner" className="overflow-hidden bg-gray-50 rounded-lg p-2"></div>
               </div>
             )}
 
             <button
               onClick={() => handleSubmit()}
               disabled={isSubmitting || !serialNumber.trim() || !elcotNumber.trim()}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition text-lg shadow-lg"
+              className="w-full py-3 sm:py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition text-base sm:text-lg shadow-lg"
             >
               {isSubmitting ? 'Saving...' : 'Save Entry'}
             </button>
           </div>
 
-          <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-900 mb-2">Instructions:</h3>
-            <ul className="text-sm text-blue-800 space-y-1">
+          <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-blue-50 rounded-lg">
+            <h3 className="font-semibold text-blue-900 mb-2 text-sm sm:text-base">Instructions:</h3>
+            <ul className="text-xs sm:text-sm text-blue-800 space-y-1">
               <li>• <strong>Barcode Scanner:</strong> Scan serial → Press Enter → Scan ELCOT → Press Enter</li>
               <li>• <strong>Camera Scanner:</strong> Click camera icon → Point at barcode → Auto-captures</li>
               <li>• <strong>Manual Entry:</strong> Type the numbers and press Enter</li>

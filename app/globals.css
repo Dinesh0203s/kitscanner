@@ -1,26 +1,130 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Camera Scanner Mobile Fixes */
+#serial-scanner,
+#elcot-scanner {
+  max-width: 100%;
+  overflow: hidden;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+#serial-scanner video,
+#elcot-scanner video {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+#serial-scanner > div,
+#elcot-scanner > div {
+  max-width: 100% !important;
+}
+
+/* Make scanner text and buttons visible */
+#serial-scanner span,
+#elcot-scanner span,
+#serial-scanner select,
+#elcot-scanner select,
+#serial-scanner button,
+#elcot-scanner button {
+  color: #1f2937 !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+/* Style the scanner buttons */
+#serial-scanner button,
+#elcot-scanner button {
+  background-color: #2563eb !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  padding: 10px 20px !important;
+  margin: 8px 4px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+#serial-scanner button:hover,
+#elcot-scanner button:hover {
+  background-color: #1d4ed8 !important;
+}
+
+/* Style the select dropdown */
+#serial-scanner select,
+#elcot-scanner select {
+  background-color: white !important;
+  border: 2px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 8px 12px !important;
+  margin: 8px 4px !important;
+  font-size: 14px !important;
+  color: #1f2937 !important;
+}
+
+/* Style the info text */
+#serial-scanner > div > div,
+#elcot-scanner > div > div {
+  color: #374151 !important;
+  font-size: 14px !important;
+  margin: 8px 0 !important;
+}
+
+/* Make the "Select Camera" and other labels visible */
+#serial-scanner label,
+#elcot-scanner label {
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  display: block !important;
+  margin: 8px 4px !important;
+}
+
+/* Style the file input button */
+#serial-scanner input[type="file"],
+#elcot-scanner input[type="file"] {
+  display: none !important;
+}
+
+#serial-scanner label[for*="html5-qrcode"],
+#elcot-scanner label[for*="html5-qrcode"] {
+  background-color: #10b981 !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border-radius: 0.5rem !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+  margin: 8px 4px !important;
+  font-weight: 600 !important;
+}
+
+/* Ensure all text in scanner is dark */
+#serial-scanner *,
+#elcot-scanner * {
+  color: #1f2937 !important;
+}
+
+/* Override any white/light text */
+#serial-scanner div[style*="color"],
+#elcot-scanner div[style*="color"] {
+  color: #1f2937 !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  #serial-scanner,
+  #elcot-scanner {
+    margin: 0 -0.25rem;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  
+  #serial-scanner video,
+  #elcot-scanner video {
+    width: 100% !important;
+  }
+  
+  #serial-scanner button,
+  #elcot-scanner button {
+    font-size: 13px !important;
+    padding: 8px 16px !important;
+  }
 }
