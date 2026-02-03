@@ -22,8 +22,10 @@ model StudentLaptop {
   elcotNumber String   @unique
   studentName String
   department  String
+  year        String
   createdAt   DateTime @default(now())
 
   @@index([elcotNumber])
   @@index([department])
+  @@index([year])
 }

@@ -9,6 +9,7 @@ interface StudentLaptop {
   elcotNumber: string
   studentName: string
   department: string
+  year: string
   createdAt: string
 }
 
@@ -144,13 +145,23 @@ export default function StudentsPage() {
                         <span className="text-xs font-medium text-gray-500 uppercase">Student Name</span>
                         <p className="text-sm font-semibold text-gray-900">{student.studentName}</p>
                       </div>
-                      <div>
-                        <span className="text-xs font-medium text-gray-500 uppercase">Department</span>
-                        <p className="text-sm">
-                          <span className="inline-block px-2 py-1 bg-purple-100 text-purple-800 rounded-full font-medium">
-                            {student.department}
-                          </span>
-                        </p>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <span className="text-xs font-medium text-gray-500 uppercase">Department</span>
+                          <p className="text-sm">
+                            <span className="inline-block px-2 py-1 bg-purple-100 text-purple-800 rounded-full font-medium">
+                              {student.department}
+                            </span>
+                          </p>
+                        </div>
+                        <div className="flex-1">
+                          <span className="text-xs font-medium text-gray-500 uppercase">Year</span>
+                          <p className="text-sm">
+                            <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                              {student.year}
+                            </span>
+                          </p>
+                        </div>
                       </div>
                       <div>
                         <span className="text-xs font-medium text-gray-500 uppercase">Assigned At</span>
@@ -176,6 +187,9 @@ export default function StudentsPage() {
                         Department
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Year
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Assigned At
                       </th>
                     </tr>
@@ -192,6 +206,11 @@ export default function StudentsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full font-medium">
                             {student.department}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                            {student.year}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

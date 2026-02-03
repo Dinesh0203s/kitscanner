@@ -9,24 +9,24 @@ const DEPARTMENTS = [
   'AERO',
   'AGRI',
   'AI & DS',
-  'AI',
-  'ML',
+  'AI & ML',
   'BME',
   'BT',
-  'CSB',
-  'SCS',
-  'EEE',
-  'CE',
+  'CSBS',
+  'CSE',
   'EEE',
   'MBA',
   'MCA',
   'MECH',
 ]
 
+const YEARS = ['I', 'II', 'III', 'IV']
+
 export default function AssignPage() {
   const [elcotNumber, setElcotNumber] = useState('')
   const [studentName, setStudentName] = useState('')
   const [department, setDepartment] = useState('')
+  const [year, setYear] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCamera, setShowCamera] = useState(false)
   
@@ -105,7 +105,7 @@ export default function AssignPage() {
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault()
 
-    if (!elcotNumber.trim() || !studentName.trim() || !department) {
+    if (!elcotNumber.trim() || !studentName.trim() || !department || !year) {
       toast.error('All fields are required')
       return
     }
@@ -120,6 +120,7 @@ export default function AssignPage() {
           elcotNumber: elcotNumber.trim(),
           studentName: studentName.trim(),
           department,
+          year,
         }),
       })
 
@@ -134,6 +135,7 @@ export default function AssignPage() {
       setElcotNumber('')
       setStudentName('')
       setDepartment('')
+      setYear('')
       elcotInputRef.current?.focus()
     } catch (error) {
       toast.error('Network error. Please try again.')
@@ -255,9 +257,30 @@ export default function AssignPage() {
               </select>
             </div>
 
+            {/* Year Select */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Year *
+              </label>
+              <select
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-base sm:text-lg bg-white"
+                disabled={isSubmitting}
+                required
+              >
+                <option value="">Select Year</option>
+                {YEARS.map((yr) => (
+                  <option key={yr} value={yr}>
+                    {yr}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <button
               type="submit"
-              disabled={isSubmitting || !elcotNumber.trim() || !studentName.trim() || !department}
+              disabled={isSubmitting || !elcotNumber.trim() || !studentName.trim() || !department || !year}
               className="w-full py-3 sm:py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition text-base sm:text-lg shadow-lg"
             >
               {isSubmitting ? 'Assigning...' : 'Assign Laptop'}
