@@ -16,3 +16,14 @@ model Laptop {
   @@index([serialNumber])
   @@index([elcotNumber])
 }
+
+model StudentLaptop {
+  id          String   @id @default(uuid())
+  elcotNumber String   @unique
+  studentName String
+  department  String
+  createdAt   DateTime @default(now())
+
+  @@index([elcotNumber])
+  @@index([department])
+}

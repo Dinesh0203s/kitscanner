@@ -155,7 +155,7 @@ export default function ScanPage() {
         <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Scan Laptop</h1>
-            <div className="flex gap-2 w-full sm:w-auto">
+            <div className="flex gap-2 w-full sm:w-auto flex-wrap">
               <button
                 onClick={() => router.push('/list')}
                 className="flex-1 sm:flex-none px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm sm:text-base"
@@ -163,8 +163,14 @@ export default function ScanPage() {
                 📋 List
               </button>
               <button
-                onClick={() => router.push('/admin')}
+                onClick={() => router.push('/assign')}
                 className="flex-1 sm:flex-none px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition text-sm sm:text-base"
+              >
+                👨‍🎓 Assign
+              </button>
+              <button
+                onClick={() => router.push('/admin')}
+                className="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition text-sm sm:text-base"
               >
                 🔐 Admin
               </button>
