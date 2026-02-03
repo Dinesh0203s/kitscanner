@@ -18,7 +18,11 @@ interface PaginationData {
   totalPages: number
 }
 
-export default function ListPage() {
+export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [laptops, setLaptops] = useState<Laptop[]>([])
   const [search, setSearch] = useState('')
   const [pagination, setPagination] = useState<PaginationData>({
@@ -27,13 +31,45 @@ export default function ListPage() {
     limit: 50,
     totalPages: 0,
   })
-  const [isLoading, setIsLoading] = useState(true)
-  const [isExporting, setIsExporting] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
-    fetchLaptops()
-  }, [search, pagination.page])
+    const auth = sessionStorage.getItem('adminAuth')
+    if (auth === 'true') {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchLaptops()
+    }
+  }, [isAuthenticated, search, pagination.page])
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoggingIn(true)
+
+    // Simple authentication (username: admin, password: dinesh)
+    if (username === 'admin' && password === 'dinesh') {
+      sessionStorage.setItem('adminAuth', 'true')
+      setIsAuthenticated(true)
+      toast.success('Login successful!')
+    } else {
+      toast.error('Invalid username or password')
+    }
+    setIsLoggingIn(false)
+  }
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('adminAuth')
+    setIsAuthenticated(false)
+    setUsername('')
+    setPassword('')
+    toast.success('Logged out successfully')
+  }
 
   const fetchLaptops = async () => {
     setIsLoading(true)
@@ -60,32 +96,89 @@ export default function ListPage() {
     }
   }
 
-  const handleExport = async () => {
-    setIsExporting(true)
-    try {
-      const response = await fetch('/api/laptops/export')
-      
-      if (!response.ok) {
-        toast.error('Failed to generate Excel report')
-        return
-      }
-
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `laptop-inventory-${new Date().toISOString().split('T')[0]}.xlsx`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-      
-      toast.success('Excel report downloaded!')
-    } catch (error) {
-      toast.error('Failed to download report')
-    } finally {
-      setIsExporting(false)
+  const handleDelete = async (id: string, serialNumber: string) => {
+    if (!confirm(`Are you sure you want to delete laptop with serial number: ${serialNumber}?`)) {
+      return
     }
+
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/laptops/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        toast.success('Laptop deleted successfully')
+        fetchLaptops()
+      } else {
+        const data = await response.json()
+        toast.error(data.error || 'Failed to delete laptop')
+      }
+    } catch (error) {
+      toast.error('Network error')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Login</h1>
+            <p className="text-gray-600">Enter your credentials to access admin panel</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter username"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition shadow-lg"
+            >
+              {isLoggingIn ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => router.push('/')}
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              ← Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -93,15 +186,11 @@ export default function ListPage() {
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Laptop Inventory</h1>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Admin Panel</h1>
+              <p className="text-sm text-gray-600 mt-1">Manage laptop inventory</p>
+            </div>
             <div className="flex gap-2 w-full sm:w-auto">
-              <button
-                onClick={handleExport}
-                disabled={isExporting || laptops.length === 0}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg transition font-medium text-sm sm:text-base"
-              >
-                {isExporting ? 'Exporting...' : '📥 Excel'}
-              </button>
               <button
                 onClick={() => router.push('/scan')}
                 className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
@@ -109,10 +198,10 @@ export default function ListPage() {
                 ➕ Scan
               </button>
               <button
-                onClick={() => router.push('/admin')}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
+                onClick={handleLogout}
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
               >
-                🔐 Admin
+                🚪 Logout
               </button>
             </div>
           </div>
@@ -158,6 +247,13 @@ export default function ListPage() {
                         <span className="text-xs font-medium text-gray-500 uppercase">Created At</span>
                         <p className="text-xs text-gray-600">{new Date(laptop.createdAt).toLocaleString()}</p>
                       </div>
+                      <button
+                        onClick={() => handleDelete(laptop.id, laptop.serialNumber)}
+                        disabled={deletingId === laptop.id}
+                        className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg transition text-sm font-medium"
+                      >
+                        {deletingId === laptop.id ? 'Deleting...' : '🗑️ Delete'}
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -177,6 +273,9 @@ export default function ListPage() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Created At
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -190,6 +289,15 @@ export default function ListPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {new Date(laptop.createdAt).toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <button
+                            onClick={() => handleDelete(laptop.id, laptop.serialNumber)}
+                            disabled={deletingId === laptop.id}
+                            className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg transition font-medium"
+                          >
+                            {deletingId === laptop.id ? 'Deleting...' : '🗑️ Delete'}
+                          </button>
                         </td>
                       </tr>
                     ))}

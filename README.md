@@ -12,8 +12,10 @@ A full-stack Next.js 14 application for laptop barcode entry and inventory repor
 - ✅ Real-time search and filtering
 - ✅ Pagination support
 - ✅ Excel report generation
+- ✅ **Admin panel** with authentication and delete functionality
 - ✅ Production-ready with TypeScript
 - ✅ Clean, responsive UI with Tailwind CSS
+- ✅ Mobile-optimized for all pages
 
 ## Tech Stack
 
@@ -94,11 +96,22 @@ Visit `http://localhost:3000` to use the application.
    - Navigate through pages
    - Download Excel report
 
+3. **Admin Panel** (`/admin`):
+   - **Login Required**:
+     - Username: `admin`
+     - Password: `dinesh`
+   - View all laptop entries
+   - Search functionality
+   - **Delete records** with confirmation
+   - Logout option
+   - Mobile-optimized interface
+
 ### API Endpoints
 
 - `POST /api/laptops` - Create new laptop entry
 - `GET /api/laptops?search=&page=1&limit=50` - List laptops with search and pagination
 - `GET /api/laptops/export` - Download Excel report
+- `DELETE /api/laptops/[id]` - Delete laptop entry (admin only)
 
 ## Database Schema
 
