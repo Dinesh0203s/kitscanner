@@ -35,6 +35,7 @@ export default function StudentsPage() {
     totalPages: 0,
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [isExporting, setIsExporting] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -67,28 +68,77 @@ export default function StudentsPage() {
     }
   }
 
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const response = await fetch('/api/students/export')
+      
+      if (!response.ok) {
+        toast.error('Failed to generate Excel report')
+        return
+      }
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `student-assignments-${new Date().toISOString().split('T')[0]}.xlsx`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      
+      toast.success('Excel report downloaded!')
+    } catch (error) {
+      toast.error('Failed to download report')
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
-            <div>
+          <div className="flex flex-col gap-4 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Student Laptops</h1>
-              <p className="text-sm text-gray-600 mt-1">View assigned laptops</p>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <button
+                  onClick={handleExport}
+                  disabled={isExporting || students.length === 0}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg transition font-medium text-sm sm:text-base"
+                >
+                  {isExporting ? 'Exporting...' : '📥 Excel'}
+                </button>
+                <button
+                  onClick={() => router.push('/assign')}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
+                >
+                  ➕ Assign
+                </button>
+                <button
+                  onClick={() => router.push('/scan')}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
+                >
+                  🏠 Home
+                </button>
+              </div>
             </div>
-            <div className="flex gap-2 w-full sm:w-auto">
-              <button
-                onClick={() => router.push('/assign')}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
-              >
-                ➕ Assign
-              </button>
-              <button
-                onClick={() => router.push('/scan')}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
-              >
-                🏠 Home
-              </button>
+
+            {/* Stats Card */}
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-sm font-medium mb-1">Total Student Assignments</p>
+                  <p className="text-white text-5xl sm:text-6xl font-bold">{pagination.total}</p>
+                </div>
+                <div className="bg-white bg-opacity-20 rounded-full p-4">
+                  <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
 

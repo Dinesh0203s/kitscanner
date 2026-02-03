@@ -92,28 +92,45 @@ export default function ListPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Laptop Inventory</h1>
-            <div className="flex gap-2 w-full sm:w-auto">
-              <button
-                onClick={handleExport}
-                disabled={isExporting || laptops.length === 0}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg transition font-medium text-sm sm:text-base"
-              >
-                {isExporting ? 'Exporting...' : '📥 Excel'}
-              </button>
-              <button
-                onClick={() => router.push('/scan')}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
-              >
-                ➕ Scan
-              </button>
-              <button
-                onClick={() => router.push('/admin')}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
-              >
-                🔐 Admin
-              </button>
+          <div className="flex flex-col gap-4 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Laptop Inventory</h1>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <button
+                  onClick={handleExport}
+                  disabled={isExporting || laptops.length === 0}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg transition font-medium text-sm sm:text-base"
+                >
+                  {isExporting ? 'Exporting...' : '📥 Excel'}
+                </button>
+                <button
+                  onClick={() => router.push('/scan')}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
+                >
+                  ➕ Scan
+                </button>
+                <button
+                  onClick={() => router.push('/admin')}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium text-sm sm:text-base"
+                >
+                  🔐 Admin
+                </button>
+              </div>
+            </div>
+
+            {/* Stats Card */}
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium mb-1">Total Laptops in Inventory</p>
+                  <p className="text-white text-5xl sm:text-6xl font-bold">{pagination.total}</p>
+                </div>
+                <div className="bg-white bg-opacity-20 rounded-full p-4">
+                  <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
 
